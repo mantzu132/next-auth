@@ -16,8 +16,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@/schemas";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
+import { login } from "@/actions/login";
+import { startTransition, useState } from "react";
 
 export const LoginForm = () => {
+  const [error, setError] = useState<string | undefined>();
+  const [success, setSuccess] = useState<string | undefined>();
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -27,9 +31,14 @@ export const LoginForm = () => {
   });
 
   function onSubmit(values: z.infer<typeof loginSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+    setSuccess("");
+    setError("");
+    startTransition(() => {
+      login(values).then((data) => {
+        setError(data.error);
+        setSuccess(data.success);
+      });
+    });
   }
 
   return (
@@ -76,8 +85,8 @@ export const LoginForm = () => {
               )}
             />
           </div>
-          <FormError message="Invalid Credentials!" />
-          <FormSuccess message="Valid Credentials!" />
+          <FormError message={error} />
+          <FormSuccess message={success} />
 
           <Button type="submit" className="w-full">
             Login
