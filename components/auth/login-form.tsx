@@ -30,6 +30,8 @@ export const LoginForm = () => {
     },
   });
 
+  // TODO: FIX HYDRATION ERRORS
+
   function onSubmit(values: z.infer<typeof loginSchema>) {
     setSuccess("");
     setError("");
