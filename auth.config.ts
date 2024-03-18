@@ -1,4 +1,5 @@
 import Credentials from "next-auth/providers/credentials";
+import Github from "next-auth/providers/github";
 
 import type { NextAuthConfig } from "next-auth";
 import { loginSchema } from "@/schemas";
@@ -7,6 +8,10 @@ import { getUserByEmail } from "@/data/user";
 
 export default {
   providers: [
+    Github({
+      clientId: process.env.GITHUB_ID,
+      clientSecret: process.env.GITHUB_SECRET,
+    }),
     Credentials({
       async authorize(credentials) {
         const validatedCredentials = loginSchema.safeParse(credentials);
