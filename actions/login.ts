@@ -6,6 +6,7 @@ import { signIn } from "@/auth";
 import { AuthError } from "next-auth";
 import { generateVerificationToken } from "@/lib/tokens";
 import { getUserByEmail } from "@/data/user";
+import { sendConfirmationEmail } from "@/lib/mail";
 
 export const login = async (
   values: z.infer<typeof loginSchema>,
@@ -29,7 +30,14 @@ export const login = async (
       existingUser.email,
     );
 
-    return { error: "Email not verified!" };
+    await sendConfirmationEmail(
+      verificationToken.email,
+      verificationToken.token,
+    );
+
+    return {
+      error: "Email not verified! Check your email we a verification link!",
+    };
   }
 
   try {
