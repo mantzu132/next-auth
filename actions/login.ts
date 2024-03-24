@@ -4,7 +4,7 @@ import { z } from "zod";
 import { loginSchema } from "@/schemas";
 import { signIn } from "@/auth";
 import { AuthError } from "next-auth";
-import { generateVerificationToken } from "@/lib/tokens";
+import { generateToken } from "@/lib/tokens";
 import { getUserByEmail } from "@/data/user";
 import { sendConfirmationEmail } from "@/lib/mail";
 
@@ -26,8 +26,9 @@ export const login = async (
   }
 
   if (!existingUser.emailVerified) {
-    const verificationToken = await generateVerificationToken(
+    const verificationToken = await generateToken(
       existingUser.email,
+      "VERIFYEMAIL",
     );
 
     await sendConfirmationEmail(

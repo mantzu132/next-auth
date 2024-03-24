@@ -1,11 +1,12 @@
 import { db } from "@/lib/db";
 
 import { v4 as uuidv4 } from "uuid";
+import { TokenType } from "@prisma/client";
 
-export const getVerificationTokenByToken = async (token: string) => {
+export const getTokenByToken = async (token: string, type: TokenType) => {
   try {
-    const verificationToken = await db.verificationToken.findUnique({
-      where: { token },
+    const verificationToken = await db.token.findUnique({
+      where: { token, type },
     });
 
     return verificationToken;
@@ -14,10 +15,10 @@ export const getVerificationTokenByToken = async (token: string) => {
   }
 };
 
-export const getVerificationTokenByEmail = async (email: string) => {
+export const getTokenByEmail = async (email: string, type: TokenType) => {
   try {
-    const verificationToken = await db.verificationToken.findFirst({
-      where: { email },
+    const verificationToken = await db.token.findFirst({
+      where: { email, type },
     });
 
     return verificationToken;
@@ -25,27 +26,28 @@ export const getVerificationTokenByEmail = async (email: string) => {
     return null;
   }
 };
-export const generateVerificationToken = async (email: string) => {
+export const generateToken = async (email: string, type: TokenType) => {
   const token = uuidv4();
   const expires = new Date(new Date().getTime() + 3600 * 1000);
 
-  const existingToken = await getVerificationTokenByEmail(email);
+  const existingToken = await getTokenByEmail(email, type);
 
   if (existingToken) {
-    await db.verificationToken.delete({
+    await db.token.delete({
       where: {
         id: existingToken.id,
       },
     });
   }
 
-  const verficationToken = await db.verificationToken.create({
+  const Token = await db.token.create({
     data: {
       email,
       token,
+      type,
       expires,
     },
   });
 
-  return verficationToken;
+  return Token;
 };

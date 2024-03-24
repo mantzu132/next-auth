@@ -51,10 +51,16 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
-model VerificationToken {
-  id      String   @id @default(cuid())
+enum TokenType {
+  VERIFYEMAIL
+  RESETPASSWORD
+}
+
+model Token {
+  id      String    @id @default(cuid())
+  type    TokenType
   email   String
-  token   String   @unique
+  token   String    @unique
   expires DateTime
 
   @@unique([email, token])

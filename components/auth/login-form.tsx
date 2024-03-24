@@ -18,6 +18,7 @@ import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 import { login } from "@/actions/login";
 import { startTransition, useState } from "react";
+import Link from "next/link";
 
 export const LoginForm = () => {
   const [error, setError] = useState<string | undefined>();
@@ -79,15 +80,23 @@ export const LoginForm = () => {
                   <FormControl>
                     <Input placeholder="******" type="password" {...field} />
                   </FormControl>
+                  <Button
+                    size="sm"
+                    variant="link"
+                    asChild
+                    className="px-0 mt-0 font-normal"
+                  >
+                    <Link href="/auth/reset">Forgot password?</Link>
+                  </Button>
 
                   <FormMessage />
                 </FormItem>
               )}
             />
           </div>
+
           <FormError message={error} />
           <FormSuccess message={success} />
-
           <Button type="submit" className="w-full">
             Login
           </Button>
